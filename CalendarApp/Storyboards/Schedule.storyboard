@@ -35,7 +35,7 @@
                                 <rect key="frame" x="322" y="11" width="72" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" title="Button" image="plus" catalog="system"/>
+                                <state key="normal" image="plus" catalog="system"/>
                                 <connections>
                                     <action selector="onTapAdd:" destination="Y6W-OH-hqX" eventType="touchUpInside" id="Hu1-4z-KX7"/>
                                 </connections>

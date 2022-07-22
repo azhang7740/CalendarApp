@@ -23,13 +23,13 @@ class DailyCalendarViewController : DayViewController {
     private let calendarEventHandler = CalendarEventHandler()
     private var fetchedDates = Set<Date>()
     
-    func updateCalendarEvent(_ event: CalendarApp.Event, _ originalStart: Date, _ newStart: Date) {
-        calendarEventHandler.updateEvent(event, originalStart, newStart)
+    func updateCalendarEvent(_ event: CalendarApp.Event, originalStartDate originalStart: Date, originalEndDate originalEnd: Date) {
+        calendarEventHandler.updateEvent(event, originalStart, originalEnd)
         reloadData()
     }
     
-    func deleteCalendarEvent(_ event: CalendarApp.Event, _ date: Date) {
-        calendarEventHandler.deleteEvent(event, date)
+    func deleteCalendarEvent(_ event: CalendarApp.Event) {
+        calendarEventHandler.deleteEvent(event)
         reloadData()
     }
     
@@ -37,33 +37,35 @@ class DailyCalendarViewController : DayViewController {
         // TODO: Error handling
     }
     
-    func addEvent(_ eventModel: CalendarApp.Event, _ date: Date) {
-        calendarEventHandler.addEvent(eventModel, date)
+    func addEvent(_ eventModel: CalendarApp.Event) {
+        calendarEventHandler.addNewEvent(eventModel)
         reloadData()
     }
     
     func fetchCalendarEventsForDate(_ date: Date) {
-        controllerDelegate?.fetchEventsForDate(date, callback: { events, errorMessage in
+        controllerDelegate?.fetchEventsForDate(date, callback: { [self] events, errorMessage in
             if let newEvents = events {
-                self.calendarEventHandler.addEventsFromArray(newEvents, date)
-                DispatchQueue.main.async {
-                    self.reloadData()
+                calendarEventHandler.addEventsFromArray(newEvents, date)
+                DispatchQueue.main.async { [self] in
+                    reloadData()
                 }
             } else if let fetchErrorMessage = errorMessage {
-                self.failedRequest(fetchErrorMessage)
+                DispatchQueue.main.async { [self] in
+                    failedRequest(fetchErrorMessage)
+                }
             } else {
-                self.failedRequest("Something went wrong.")
+                DispatchQueue.main.async { [self] in
+                    failedRequest("Something went wrong.")
+                }
             }
         })
     }
     
     override func eventsForDate(_ date: Date) -> [EventDescriptor] {
-        guard let calendarKitEvents = calendarEventHandler.getEventsForDate(date) else {
-            if (!fetchedDates.contains(date)) {
-                fetchedDates.insert(date)
-                fetchCalendarEventsForDate(date)
-            }
-            return calendarEventHandler.getEventsForDate(date) ?? []
+        let calendarKitEvents = calendarEventHandler.getEventsForDate(date)
+        if (!fetchedDates.contains(date)) {
+            fetchedDates.insert(date)
+            fetchCalendarEventsForDate(date)
         }
         return calendarKitEvents
     }

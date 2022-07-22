@@ -16,7 +16,7 @@ public class Event : NSObject {
     public var updatedAt: Date?
     public var createdAt: Date?
     
-    public var eventTitle = ""
+    public var eventTitle = "[No title]"
     public var authorUsername: String?
     public var eventDescription = ""
     public var location = ""
@@ -26,10 +26,19 @@ public class Event : NSObject {
     public var isAllDay = false
     
     public var color = SystemColors.systemBlue
-    public weak var editedEvent: EventDescriptor?
+    private weak var edited: EventDescriptor?
 }
 
 extension Event : EventDescriptor {
+    public var editedEvent: EventDescriptor? {
+        get {
+            return edited
+        }
+        set(newValue) {
+            edited = newValue
+        }
+    }
+    
     public var dateInterval: DateInterval {
         get {
             return DateInterval(start: startDate, end: endDate)
@@ -100,7 +109,7 @@ extension Event : EventDescriptor {
     /// Dynamic color that changes depending on the user interface style (dark / light)
     private func dynamicStandardBackgroundColor() -> UIColor {
       let light = backgroundColorForLightTheme(baseColor: color)
-      let dark = backgroundColorForDarkTheme(baseColor: color)
+      let dark = backgroundColorForDarkTheme()
       return dynamicColor(light: light, dark: dark)
     }
     
@@ -120,7 +129,7 @@ extension Event : EventDescriptor {
       baseColor.withAlphaComponent(0.3)
     }
     
-    private func backgroundColorForDarkTheme(baseColor: UIColor) -> UIColor {
+    private func backgroundColorForDarkTheme() -> UIColor {
       var h: CGFloat = 0, s: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
       color.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
       return UIColor(hue: h, saturation: s, brightness: b * 0.4, alpha: a * 0.8)

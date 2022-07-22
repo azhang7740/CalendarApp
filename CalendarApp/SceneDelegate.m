@@ -6,6 +6,7 @@
 //
 
 #import "SceneDelegate.h"
+#import "AppDelegate.h"
 #import <Parse/Parse.h>
 
 @interface SceneDelegate ()
@@ -26,29 +27,8 @@
     }
 }
 
-
-- (void)sceneDidDisconnect:(UIScene *)scene {
-    
-}
-
-
-- (void)sceneDidBecomeActive:(UIScene *)scene {
-    
-}
-
-
-- (void)sceneWillResignActive:(UIScene *)scene {
-    
-}
-
-
-- (void)sceneWillEnterForeground:(UIScene *)scene {
-    
-}
-
-
 - (void)sceneDidEnterBackground:(UIScene *)scene {
-    
+    [(AppDelegate *)UIApplication.sharedApplication.delegate saveContext];
 }
 
 

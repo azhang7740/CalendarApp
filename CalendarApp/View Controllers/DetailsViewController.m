@@ -8,6 +8,7 @@
 #import "DetailsViewController.h"
 #import "DetailsView.h"
 #import "ComposeViewController.h"
+#import "CoreDataEventHandler.h"
 
 @interface DetailsViewController () <DetailsViewDelegate, ComposeViewControllerDelegate>
 
@@ -91,8 +92,8 @@
 }
 
 - (void)didTapDelete {
-    [self.parseEventHandler deleteRemoteObjectWithEvent:self.event completion:^(NSString * _Nullable error) {
-        if (!error) {
+    [self.parseEventHandler deleteEvent:self.event completion:^(BOOL success, NSString * _Nullable error) {
+        if (success) {
             [self.delegate didDeleteEvent:self.event];
         } else {
             // TODO: error handling
@@ -105,15 +106,17 @@
 }
 
 - (void)didTapChangeEvent:(Event *)event
-             originalDate:(NSDate *)date{
+        originalStartDate:(NSDate *)startDate
+          originalEndDate:(NSDate *)endDate {
     [self dismissViewControllerAnimated:YES completion:nil];
-    [self.parseEventHandler updateRemoteObjectWithEvent:event completion:^(NSString * _Nullable error) {
-        if (error) {
-            // TODO: error handling
-        } else {
+    [self.parseEventHandler updateEvent:event completion:^(BOOL success, NSString * _Nullable error) {
+        if (success) {
             [self updateDetailsView];
             [self.delegate didUpdateEvent:event
-                             originalDate:date];
+                        originalStartDate:startDate
+                          originalEndDate:endDate];
+        } else {
+            // TODO: error handling
         }
     }];
 }

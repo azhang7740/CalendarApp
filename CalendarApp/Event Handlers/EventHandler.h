@@ -10,25 +10,24 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void (^EventQueryCompletion)(BOOL success, NSMutableArray<Event *> * _Nullable, NSDate * _Nullable, NSString * _Nullable);
+typedef void (^RemoteEventChangeCompletion)(BOOL success, NSString * _Nullable);
+
 @protocol EventHandler <NSObject>
 
-@required
-- (void)queryUserEventsOnDate:(NSDate *)date
-                   completion:(void(^_Nonnull)(NSMutableArray<Event *> * _Nullable events,
-                                               NSDate *date,
-                                               NSString * _Nullable error))completion;
+- (void)queryEventsOnDate:(NSDate *)date
+               completion:(EventQueryCompletion)completion;
 - (void)uploadWithEvent:(Event *)newEvent
-             completion:(void (^_Nonnull)(Event *event, NSDate *date, NSString * _Nullable error))completion;
-- (void)updateRemoteObjectWithEvent:(Event *)event
-                         completion:(void (^_Nonnull)(NSString * _Nullable error))completion;
-- (void)deleteRemoteObjectWithEvent:(Event *)event
-                         completion:(void (^_Nonnull)(NSString * _Nullable error))completion;
+             completion:(RemoteEventChangeCompletion)completion;
+- (void)updateEvent:(Event *)event
+         completion:(RemoteEventChangeCompletion)completion;
+- (void)deleteEvent:(Event *)event
+         completion:(RemoteEventChangeCompletion)completion;
 
 @end
 
 @protocol RemoteEventUpdates <NSObject>
 
-@required
 - (void)remoteEventsDidChange;
 
 @end

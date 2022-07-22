@@ -66,6 +66,7 @@
     }
     Event *newEvent = [[Event alloc] init];
     newEvent.objectUUID = [NSUUID UUID];
+    newEvent.createdAt = [NSDate date];
     [self setEventFields:newEvent];
     
     return newEvent;
@@ -83,6 +84,7 @@
     newEvent.location = self.composeView.locationTextField.text;
     newEvent.startDate = self.composeView.startDatePicker.date;
     newEvent.endDate = self.composeView.endDatePicker.date;
+    newEvent.updatedAt = [NSDate date];
     
     if (self.composeView.descriptionTextView.textColor
         == UIColor.lightGrayColor) {
@@ -120,16 +122,20 @@
         Event *newEvent = [self createEventFromView];
         if (newEvent) {
             [self.delegate didTapChangeEvent:newEvent
-                                originalDate:newEvent.startDate];
+                           originalStartDate:newEvent.startDate
+                             originalEndDate:newEvent.endDate];
         }
     } else {
-        NSDate *prevDate = self.event.startDate;
+        NSDate *prevStartDate = self.event.startDate;
+        NSDate *prevEndDate = self.event.endDate;
         NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSCalendarIdentifierGregorian];
         [calendar setTimeZone:[NSTimeZone systemTimeZone]];
-        NSDate *midnight = [calendar dateBySettingHour:0 minute:0 second:0 ofDate:prevDate options:0];
+        NSDate *midnightStart = [calendar dateBySettingHour:0 minute:0 second:0 ofDate:prevStartDate options:0];
+        NSDate *midnightEnd = [calendar dateBySettingHour:0 minute:0 second:0 ofDate:prevEndDate options:0];
         Event *updatedEvent = [self updateEventFromView];
         [self.delegate didTapChangeEvent:updatedEvent
-                            originalDate:midnight];
+                       originalStartDate:midnightStart
+                         originalEndDate:midnightEnd];
     }
 }
 
